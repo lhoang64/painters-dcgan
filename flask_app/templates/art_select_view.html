@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<head>
+    <title>Art Select View</title>
+    <style>
+        body, html, #window {
+            height: 100%;
+            background-color: #D5D5D5;
+        }
+
+        h3 {
+            font-family: "Helvetica";
+        }
+
+        #selected {
+            width: 100%;
+        }
+
+        #dataset {
+            width: 100%;
+        }
+
+        .images {
+            margin: auto;
+            width: 85%;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="window">
+        <div id="dataset">
+            <h3>{{ style.upper() }} DATASET</h3>
+            <div class="images">
+                <img id="im1" src="" onclick="selectImage(document.getElementById('im1').src)" style="width:24%"></img>
+                <img id="im2" src="" onclick="selectImage(document.getElementById('im2').src)" style="width:24%"></img>
+                <img id="im3" src="" onclick="selectImage(document.getElementById('im3').src)" style="width:24%"></img>
+                <img id="im4" src="" onclick="selectImage(document.getElementById('im4').src)" style="width:24%"></img>
+            </div>
+            <div class="images">
+                <img id="im5" src="" onclick="selectImage(document.getElementById('im5').src)" style="width:24%"></img>
+                <img id="im6" src="" onclick="selectImage(document.getElementById('im6').src)" style="width:24%"></img>
+                <img id="im7" src="" onclick="selectImage(document.getElementById('im7').src)" style="width:24%"></img>
+                <img id="im8" src="" onclick="selectImage(document.getElementById('im8').src)" style="width:24%"></img>
+            </div>
+            <button onclick="moreImages()">More images</button>
+        </div>
+        <div id="selected">
+            <div id="header">
+                <h3>SELECTED IMAGES</h3>
+            </div>
+            <div id="selectedImages"></div>
+            <button onclick="saveSelection()">Save selection</button>
+            <p id="saveStatus"></p>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var imageList = {{ images|safe }};
+        imageDir = {{ path|safe }}
+        document.getElementById("im1").src = imageDir + '/' + imageList[0];
+        document.getElementById("im2").src = imageDir + '/' + imageList[1];
+        document.getElementById("im3").src = imageDir + '/' + imageList[2];
+        document.getElementById("im4").src = imageDir + '/' + imageList[3];
+        document.getElementById("im5").src = imageDir + '/' + imageList[4];
+        document.getElementById("im6").src = imageDir + '/' + imageList[5];
+        document.getElementById("im7").src = imageDir + '/' + imageList[6];
+        document.getElementById("im8").src = imageDir + '/' + imageList[7];
+
+        function moreImages(){
+            for(i=0; i<8; i++){
+                imageList.push(imageList.shift());
+            }
+            document.getElementById("im1").src = imageDir + '/' + imageList[0];
+            document.getElementById("im2").src = imageDir + '/' + imageList[1];
+            document.getElementById("im3").src = imageDir + '/' + imageList[2];
+            document.getElementById("im4").src = imageDir + '/' + imageList[3];
+            document.getElementById("im5").src = imageDir + '/' + imageList[4];
+            document.getElementById("im6").src = imageDir + '/' + imageList[5];
+            document.getElementById("im7").src = imageDir + '/' + imageList[6];
+            document.getElementById("im8").src = imageDir + '/' + imageList[7];
+        }
+
+        var selectedImages = [];
+        console.log(selectedImages);
+
+        function selectImage(src){
+            imagePath = src.split("/");
+            var imageName = imagePath.pop();
+            if(selectedImages.includes(imageName) == false){
+                selectedImages.push(imageName);
+                var newImg = document.createElement("IMG");
+                var imgSrc = imageDir + '/' + selectedImages[selectedImages.length - 1];
+                newImg.setAttribute("src", imgSrc);
+                document.getElementById("selectedImages").appendChild(newImg);
+            }
+        }
+
+        function saveSelection(){
+            if(selectedImages.length == 0){
+                document.getElementById("saveStatus").innerHTML = "No selections made.";
+                return
+            }
+            console.log('save button clicked');
+
+            var fakeForm = document.createElement("form");
+            var styleInput = document.createElement("input");
+            var imInput = document.createElement("input");
+            fakeForm.method = "POST";
+            fakeForm.action = "{{ url_for('art_select.save') }}";
+
+            styleInput.name = "style";
+            styleInput.value = "{{ style }}";
+            imInput.name= "selected_images";
+            imInput.value = JSON.stringify(selectedImages);
+            fakeForm.appendChild(styleInput);
+            fakeForm.appendChild(imInput);
+            document.body.appendChild(fakeForm);
+            fakeForm.submit();
+        }
+    </script>
+</body>

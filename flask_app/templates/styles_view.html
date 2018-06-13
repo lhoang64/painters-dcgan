@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<head>
+    <title>Styles</title>
+    <style>
+        body {
+            background-color: #D5D5D5;
+        }
+
+        .header{
+            margin: auto;
+            width: 100%;
+            padding-left: 20px;
+        }
+
+        h3, p{
+            font-family: "Helvetica";
+        }
+
+        ul{
+            font-family: "Helvetica";
+            list-style-type: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h3>Generating Art using DCGAN Architecture</h3>
+        <p>This simple interface displays the art styles present in Kaggle's "Painters by Numbers" dataset. The purpose
+        of this project was to explore the DCGAN architecture's ability to generate artwork with given a dataset comprised
+        of paintings labeled by a specific art style. Neural networks leverage the similarities present in a set of images
+            to make classifications. Here the user can interact with the full dataset, and compose their
+            own by selecting paintings through their own definition of what makes images similar.</p>
+    </div>
+    <div id="styles">
+        <ul>
+            {% for style in styles %}
+                <li><a href="{{ url_for('art_select.art_style', art_style=style) }}">{{ style }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
